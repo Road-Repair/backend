@@ -22,6 +22,11 @@ docker-compose exec backend python manage.py migrate
 
 # Проект будет доступен на 8000 порту.
 
+# Swager доступен по адресу:
+```
+http://localhost:8000/api/v1/docs/
+```
+
 Если отсутствуют статические файлы, то выполнить
 ```
 docker-compose exec backend python manage.py collectstatic --no-input
