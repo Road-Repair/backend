@@ -25,6 +25,10 @@ INSTALLED_APPS = [
     "drf_spectacular",
     # local
     "users.apps.UsersConfig",
+    "locations.apps.LocationsConfig",
+    "projects.apps.ProjectsConfig",
+    "transactions.apps.TransactionsConfig",
+    "news.apps.NewsConfig",
 ]
 
 MIDDLEWARE = [
@@ -82,16 +86,25 @@ AUTH_USER_MODEL = "users.CustomUser"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation"
+            ".UserAttributeSimilarityValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation" ".MinimumLengthValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation.CommonPasswordValidator"
+        ),
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": (
+            "django.contrib.auth.password_validation.NumericPasswordValidator"
+        ),
     },
 ]
 
