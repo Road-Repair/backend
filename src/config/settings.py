@@ -23,6 +23,8 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework.documentation",
     "drf_spectacular",
+    # local
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -76,6 +78,7 @@ else:
         }
     }
 
+AUTH_USER_MODEL = "users.CustomUser"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
