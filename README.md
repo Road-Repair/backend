@@ -1,6 +1,6 @@
 # backend for Road Repair Application
 
-[![Build Status](https://github.com/Road-Repair/backend/actions/road_repair_workflow.yaml/badge.svg)](https://github.com/Road-Repair/backend/actions/road_repair_workflow.yaml/)
+[![road_repair workflow](https://github.com/Road-Repair/backend/actions/workflows/road_repair_workflow.yaml/badge.svg)](https://github.com/Road-Repair/backend/actions/workflows/road_repair_workflow.yaml)
 
 ### Как запустить проект:
 
