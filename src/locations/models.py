@@ -1,9 +1,14 @@
 from django.db import models
 
-from core.enums import MAX_REGION_TITLE
+from core.enums import Limits
+from locations.managers import (
+    FederationEntityManager,
+    MunicipalityManager,
+    RegionManager,
+)
 
 
-class AbstractLocationModel(models.Mode):
+class AbstractLocationModel(models.Model):
     """
     Абстрактная модель для регионов.
     """
@@ -11,7 +16,9 @@ class AbstractLocationModel(models.Mode):
     projects_create = models.BooleanField(
         "Можно создавать авторские проекты", default=False
     )
-    title = models.CharField("Наименование", max_length=MAX_REGION_TITLE)
+    title = models.CharField(
+        "Наименование", max_length=Limits.MAX_LENGTH_REGION_TITLE
+    )
 
     class Meta:
         abstract = True
@@ -26,9 +33,11 @@ class FederationEntity(AbstractLocationModel):
     """
 
     title = models.CharField(
-        "Наименование", max_length=MAX_REGION_TITLE, unique=True
+        "Наименование", max_length=Limits.MAX_LENGTH_REGION_TITLE, unique=True
     )
-    index = models.ImageField("Номер Субъекта", unique=True, db_index=True)
+    index = models.IntegerField("Номер Субъекта", unique=True, db_index=True)
+
+    objects = FederationEntityManager()
 
     class Meta:
         verbose_name = "Субъект Федерации"
@@ -42,10 +51,10 @@ class Region(AbstractLocationModel):
     """
 
     federation_entity = models.ForeignKey(
-        FederationEntity,
-        on_delete=models.CASCADE,
-        related_name="regions"
+        FederationEntity, on_delete=models.CASCADE, related_name="regions"
     )
+
+    objects = RegionManager()
 
     class Meta:
         verbose_name = "Район"
@@ -58,10 +67,10 @@ class Municipality(AbstractLocationModel):
     """
 
     region = models.ForeignKey(
-        Region,
-        on_delete=models.CASCADE,
-        related_name="municipalities"
+        Region, on_delete=models.CASCADE, related_name="municipalities"
     )
+
+    objects = MunicipalityManager()
 
     class Meta:
         verbose_name = "Муниципальное образование"
@@ -74,9 +83,10 @@ class Settlement(AbstractLocationModel):
     """
 
     municipality = models.ForeignKey(
-        Region,
-        on_delete=models.CASCADE,
-        related_name="settlements"
+        Municipality, on_delete=models.CASCADE, related_name="settlements"
+    )
+    projects_create = models.BooleanField(
+        "Можно создавать авторские проекты", default=True
     )
 
     class Meta:
