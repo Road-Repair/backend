@@ -4,23 +4,32 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from core.choices_classes import Role, Sex
 from core.enums import Limits
+from users.managers import UserManager
+from users.validators import unique_email
 
 
 class CustomUser(AbstractUser):
-    """Custom User model."""
+    """Кастомный юзер."""
 
     username = None
-    account = models.OneToOneField(
-        "Account",
-        verbose_name="Профиль аккаунта",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
+    first_name = models.CharField(
+        verbose_name="Имя",
+        max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
+        blank=False,
+        null=False,
+    )
+    last_name = models.CharField(
+        verbose_name="Фамилия",
+        max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
+        blank=False,
+        null=False,
     )
     email = models.EmailField(
         verbose_name="Адрес электронной почты",
         blank=True,
-        unique=True,
+        null=True,
+        unique=False,
+        validators=(unique_email,),
     )
     phone = PhoneNumberField(
         verbose_name="Номер телефона",
@@ -38,13 +47,16 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = ()
 
+    objects = UserManager()
+
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+        default_related_name = "user"
 
     def __str__(self) -> str:
         return (
-            f"{self.account.last_name} {self.account.first_name[0].upper()}."
+            f"{self.last_name} {self.first_name[0].upper()}. "
             f"{self.account.patronymic[0] + '.' if self.account.patronymic else ''} "
         )
 
@@ -62,19 +74,14 @@ class CustomUser(AbstractUser):
 
 
 class Account(models.Model):
-    """Account model."""
+    """Аккаунт пользователя."""
 
-    first_name = models.CharField(
-        verbose_name="Имя",
-        max_length=Limits.MAX_LENGTH_FIRST_NAME.value,
-        blank=False,
-        null=False,
-    )
-    last_name = models.CharField(
-        verbose_name="Фамилия",
-        max_length=Limits.MAX_LENGTH_LAST_NAME.value,
-        blank=False,
-        null=False,
+    user = models.OneToOneField(
+        CustomUser,
+        verbose_name="Пользователь",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
     patronymic = models.CharField(
         verbose_name="Отчество",
@@ -97,6 +104,10 @@ class Account(models.Model):
     class Meta:
         verbose_name = "Аккаунт"
         verbose_name_plural = "Аккаунты"
+        default_related_name = "account"
 
     def __str__(self) -> str:
-        return f"{self.last_name} {self.first_name[0].upper()}."
+        return (
+            f"{self.user.last_name} {self.user.first_name[0].upper()}. "
+            f"{self.patronymic[0] + '.' if self.patronymic else ''} "
+        )
