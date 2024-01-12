@@ -12,10 +12,12 @@ class News(models.Model):
     title = models.CharField(
         "Заголовок", max_length=Limits.MAX_LENGTH_NEWS_TITLE
     )
-    content = models.CharField(
+    content = models.TextField(
         "Содержание", max_length=Limits.MAX_LENGTH_NEWS_CONTENT
     )
-    image = models.ImageField("Фотография", upload_to="news_images", null=True)
+    image = models.ImageField(
+        "Фотография", upload_to="news_images", blank=True, null=True
+    )
     created = models.DateTimeField(
         "Время создания", auto_now_add=True, db_index=True
     )
