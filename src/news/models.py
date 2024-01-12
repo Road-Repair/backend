@@ -25,7 +25,7 @@ class News(models.Model):
     class Meta:
         verbose_name = "Новость"
         verbose_name_plural = "Новости"
-        ordering = ["-published", ["-created"]]
+        ordering = ["-published", "-created"]
 
     def publish(self):
         if not self.published:

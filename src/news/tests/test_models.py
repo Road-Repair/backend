@@ -1,9 +1,9 @@
 import shutil
 import tempfile
 
-from django.test import TestCase, override_settings
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase, override_settings
 
 from news.models import News
 from news.tests.factories import NewsFactory
@@ -37,6 +37,9 @@ class NewssModelsTest(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+
+    def test_news_creation(self):
+        self.assertEqual(self.news_1.image, "news_images/small.gif")
 
     def test_models_have_correct_object_names(self):
         self.assertEqual(str(self.news_1), self.news_1.title)
