@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 
-from news.models import News
+from news.models import News, NewsImage
 from news.tests.factories import NewsFactory
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
@@ -31,15 +31,16 @@ class NewssModelsTest(TestCase):
         uploaded = SimpleUploadedFile(
             name="small.gif", content=small_gif, content_type="image/gif"
         )
-        cls.news_1 = NewsFactory(image=uploaded)
+        cls.news_1 = NewsFactory()
+        cls.image_1 = NewsImage.objects.create(news=cls.news_1, image=uploaded)
 
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
-    def test_news_creation(self):
-        self.assertEqual(self.news_1.image, "news_images/small.gif")
+    def test_news_image_creation(self):
+        self.assertEqual(self.image_1.image, "news_images/small.gif")
 
     def test_models_have_correct_object_names(self):
         self.assertEqual(str(self.news_1), self.news_1.title)

@@ -6,7 +6,10 @@ from dotenv import load_dotenv
 
 TRUE_VALUES = ["1", "True", "true", "YES", "yes"]
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv()
+
+dotenv_path = os.path.join(os.path.dirname(__file__), "../../.env")
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
 
 SECRET_KEY = os.getenv("SECRET_KEY", default="yours-secret-key")
 DEBUG = os.getenv("DEBUG") in TRUE_VALUES
