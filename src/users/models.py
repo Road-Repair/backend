@@ -11,7 +11,6 @@ from users.validators import unique_email
 class CustomUser(AbstractUser):
     """Кастомный юзер."""
 
-    username = None
     first_name = models.CharField(
         verbose_name="Имя",
         max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
@@ -55,10 +54,7 @@ class CustomUser(AbstractUser):
         default_related_name = "user"
 
     def __str__(self) -> str:
-        return (
-            f"{self.last_name} {self.first_name[0].upper()}. "
-            f"{self.account.patronymic[0] + '.' if self.account.patronymic else ''} "
-        )
+        return self.username
 
     @property
     def is_admin(self):
@@ -107,7 +103,4 @@ class Account(models.Model):
         default_related_name = "account"
 
     def __str__(self) -> str:
-        return (
-            f"{self.user.last_name} {self.user.first_name[0].upper()}. "
-            f"{self.patronymic[0] + '.' if self.patronymic else ''} "
-        )
+        return self.user.username

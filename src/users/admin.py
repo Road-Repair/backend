@@ -14,6 +14,7 @@ class UserAdmin(ModelAdmin):
     ordering = ["phone"]
     search_fields = ("phone",)
     list_display = (
+        "username",
         "first_name",
         "last_name",
         "email",

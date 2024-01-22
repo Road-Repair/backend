@@ -1,4 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
+from django.conf import settings
+from django.core.mail import EmailMessage
 
 from core.choices_classes import Role
 
@@ -6,16 +8,33 @@ from core.choices_classes import Role
 class UserManager(BaseUserManager):
     """Кастомный менеджер для юзера."""
 
-    def create_user(self, phone, email, password, **extra_fields):
+    def create_user(
+            self, phone, email, password=None, **extra_fields
+    ):
         if not phone:
             raise ValueError("Телефон обязателен")
-        email = self.normalize_email(email) if email else None
+        if not email:
+            raise ValueError("Email обязателен")
+        email = self.normalize_email(email)
         user = self.model(
             phone=phone,
             email=email,
             **extra_fields,
         )
+        if not password:
+            password = self.make_random_password(
+                length=int(settings.PASSWORD_LENGTH),
+                allowed_chars=settings.PASSWORD_SYMBOLS
+            )
+        print(password)
+        print(email)
         user.set_password(password)
+        send_to = EmailMessage(
+            "Приветствуем Вас на сайте Желтый грейдер",
+            f"Ваш временный пароль для входа в личный кабинет: {password}",
+            to=[email],
+        )
+        send_to.send()
         user.save(using=self._db)
         return user
 

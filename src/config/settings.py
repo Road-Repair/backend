@@ -14,6 +14,8 @@ if os.path.exists(dotenv_path):
 SECRET_KEY = os.getenv("SECRET_KEY", default="yours-secret-key")
 DEBUG = os.getenv("DEBUG") in TRUE_VALUES
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(", ")
+PASSWORD_LENGTH = os.getenv("PASSWORD_LENGTH")
+PASSWORD_SYMBOLS = os.getenv("PASSWORD_SYMBOLS")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -137,3 +139,18 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Documentation for road-repair API built with DRF",
     "VERSION": "1.0.0",
 }
+
+EMAIL_FILE = True if os.getenv("EMAIL_FILE") == "YES" else False
+if EMAIL_FILE:
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_USE_TLS = True if os.getenv("EMAIL_USE_TLS") == "YES" else False
+    EMAIL_USE_SSL = False
+    EMAIL_PORT = os.getenv("EMAIL_PORT")
+    EMAIL_HOST = os.getenv("EMAIL_HOST")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
+SERVER_EMAIL = os.getenv("EMAIL_HOST_USER")
