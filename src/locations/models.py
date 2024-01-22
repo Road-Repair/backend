@@ -2,9 +2,9 @@ from django.db import models
 
 from core.enums import Limits
 from locations.managers import (
-    FederationEntityManager,
     MunicipalityManager,
     RegionManager,
+    SettlementManager,
 )
 
 
@@ -36,8 +36,6 @@ class FederationEntity(AbstractLocationModel):
         "Наименование", max_length=Limits.MAX_LENGTH_REGION_TITLE, unique=True
     )
     index = models.IntegerField("Номер Субъекта", unique=True, db_index=True)
-
-    objects = FederationEntityManager()
 
     class Meta:
         verbose_name = "Субъект Федерации"
@@ -88,6 +86,8 @@ class Settlement(AbstractLocationModel):
     projects_create = models.BooleanField(
         "Можно создавать авторские проекты", default=True
     )
+
+    objects = SettlementManager()
 
     class Meta:
         verbose_name = "Населенный пункт"

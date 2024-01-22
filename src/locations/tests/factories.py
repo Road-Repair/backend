@@ -1,4 +1,4 @@
-from factory import Sequence, fuzzy, SubFactory
+from factory import Sequence, SubFactory, fuzzy
 from factory.django import DjangoModelFactory
 
 from core.enums import Limits

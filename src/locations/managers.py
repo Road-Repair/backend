@@ -2,17 +2,17 @@ from django.db import models
 from django.db.models.query import QuerySet
 
 
-class FederationEntityManager(models.Manager):
+class SettlementManager(models.Manager):
     """
-    Пользовательстки менеджер для модели Субъекта Федерации.
+    Пользовательстки менеджер для модели населенных пунктов.
     """
 
     def get_queryset(self) -> QuerySet:
         qs = super().get_queryset()
         return qs.select_related(
-            "region",
-            "region__municipality",
-            "region__municipality__settlement",
+            "municipality",
+            "municipality__region",
+            "municipality__region__federation_entity",
         )
 
 
@@ -24,8 +24,7 @@ class RegionManager(models.Manager):
     def get_queryset(self) -> QuerySet:
         qs = super().get_queryset()
         return qs.select_related(
-            "municipality",
-            "municipality__settlement",
+            "federation_entity",
         )
 
 
@@ -36,6 +35,4 @@ class MunicipalityManager(models.Manager):
 
     def get_queryset(self) -> QuerySet:
         qs = super().get_queryset()
-        return qs.select_related(
-            "settlement",
-        )
+        return qs.select_related("region", "region__federation_entity")
