@@ -1,8 +1,10 @@
-from factory import Faker, LazyAttribute
+from factory import Faker, LazyAttribute, PostGenerationMethodCall
 from factory.django import DjangoModelFactory
 
 from core.choices_classes import Role
 from users.models import CustomUser
+
+PASSWORD = 'SoMePaSS_word_123'
 
 
 class CustomUserFactory(DjangoModelFactory):
@@ -16,3 +18,4 @@ class CustomUserFactory(DjangoModelFactory):
     role = Role.USER
     is_superuser = False
     is_active = True
+    password = PostGenerationMethodCall('set_password', PASSWORD)

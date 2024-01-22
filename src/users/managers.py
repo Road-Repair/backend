@@ -27,7 +27,6 @@ class UserManager(BaseUserManager):
                 allowed_chars=settings.PASSWORD_SYMBOLS
             )
         print(password)
-        print(email)
         user.set_password(password)
         send_to = EmailMessage(
             "Приветствуем Вас на сайте Желтый грейдер",
