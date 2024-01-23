@@ -8,11 +8,10 @@ def send_registry_email(mail_to: str, password: str):
     """
 
     html_body = render_to_string(
-        "templates/email/user_registry.html", {"password": password}
+        "email/user_registry.html", {"password": password}
     )
     message = EmailMultiAlternatives(
-        subject="Регистрация на сервисе Желтый Грейдер",
-        to=mail_to
+        subject="Регистрация на сервисе Желтый Грейдер", to=[mail_to]
     )
     message.attach_alternative(html_body, "text/html")
     message.send()

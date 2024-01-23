@@ -4,7 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from core.choices_classes import Role, Sex
 from core.enums import Limits
-from users.managers import UserManager
+from users.managers import AccountManager, UserManager
 from users.validators import unique_email
 
 
@@ -14,14 +14,14 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(
         verbose_name="Имя",
         max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     last_name = models.CharField(
         verbose_name="Фамилия",
         max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     email = models.EmailField(
         verbose_name="Адрес электронной почты",
@@ -96,6 +96,8 @@ class Account(models.Model):
         blank=True,
         null=True,
     )
+
+    objects = AccountManager()
 
     class Meta:
         verbose_name = "Аккаунт"

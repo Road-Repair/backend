@@ -8,11 +8,7 @@ class TestUser(TestUserFixtures):
         email = "user@foo.com"
         phone = "+79999879887"
         username = "user"
-        body = {
-            "email": email,
-            "phone": phone,
-            "username": username
-        }
+        body = {"email": email, "phone": phone, "username": username}
         response = self.anon_client.post(
             "/api/v1/users/", data=body, format="json"
         )

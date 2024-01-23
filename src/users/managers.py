@@ -1,16 +1,16 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.conf import settings
-from django.core.mail import EmailMessage
+from django.db import models
+from django.db.models.query import QuerySet
 
 from core.choices_classes import Role
+from core.services import send_registry_email
 
 
 class UserManager(BaseUserManager):
     """Кастомный менеджер для юзера."""
 
-    def create_user(
-            self, phone, email, password=None, **extra_fields
-    ):
+    def create_user(self, phone, email, password=None, **extra_fields):
         if not phone:
             raise ValueError("Телефон обязателен")
         if not email:
@@ -24,17 +24,11 @@ class UserManager(BaseUserManager):
         if not password:
             password = self.make_random_password(
                 length=int(settings.PASSWORD_LENGTH),
-                allowed_chars=settings.PASSWORD_SYMBOLS
+                allowed_chars=settings.PASSWORD_SYMBOLS,
             )
-        print(password)
         user.set_password(password)
-        send_to = EmailMessage(
-            "Приветствуем Вас на сайте Желтый грейдер",
-            f"Ваш временный пароль для входа в личный кабинет: {password}",
-            to=[email],
-        )
-        send_to.send()
         user.save(using=self._db)
+        send_registry_email(email, password)
         return user
 
     def create_superuser(self, phone, password, email=None):
@@ -53,3 +47,13 @@ class UserManager(BaseUserManager):
         user.role = Role.ADMIN
         user.save(using=self._db)
         return user
+
+
+class AccountManager(models.Manager):
+    """
+    Пользовательсткий менеджер для Модели Аккаунт.
+    """
+
+    def get_queryset(self) -> QuerySet:
+        qs = super().get_queryset()
+        return qs.select_related("user")
