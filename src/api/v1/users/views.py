@@ -6,18 +6,20 @@ from drf_spectacular.utils import (
     OpenApiExample,
 )
 from rest_framework import mixins, status, viewsets
+from rest_framework.exceptions import AuthenticationFailed, ParseError
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+
+
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
 )
 
 from django.contrib.auth import authenticate
 from django.conf import settings
 
-from core.enums import Limits
 from users.models import Account
 from users.permissions import IsOwner
 from users.serializers import (
@@ -63,45 +65,6 @@ class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 @extend_schema(
     tags=["Users"],
-    summary="Логин",
-    examples=[
-        OpenApiExample(
-            "Пример входа пользователя в систему.",
-            value={
-                "phone": "+79123456789",
-                "password": "password"
-            },
-            status_codes=[str(status.HTTP_200_OK)],
-        ),
-    ]
-)
-class CookieTokenObtainPairView(TokenObtainPairView):
-    """
-    Сохранение токена в Cookie.
-    """
-
-    def finalize_response(self, request, response, *args, **kwargs):
-        if response.data.get("refresh"):
-            response.set_cookie(
-                "refresh_token",
-                response.data["refresh"],
-                max_age=Limits.COOKIE_MAX_AGE,
-                httponly=True,
-            )
-            response.set_cookie(
-                "access_token",
-                response.data["access"],
-                max_age=Limits.COOKIE_MAX_AGE,
-                httponly=True,
-            )
-            del response.data["refresh"]
-            del response.data["access"]
-            response.data = {"Success": "Login successfully"}
-        return super().finalize_response(request, response, *args, **kwargs)
-
-
-@extend_schema(
-    tags=["Users"],
     summary="Обновление refresh токена.",
 )
 class CookieTokenRefreshView(TokenRefreshView):
@@ -142,22 +105,20 @@ def get_tokens_for_user(user):
 
 @extend_schema(
     tags=["Users"],
-    summary="Логин",
+    summary="Login",
     examples=[
         OpenApiExample(
             "Пример входа пользователя в систему.",
-            value={
-                "phone": "+79123456789",
-                "password": "password"
-            },
+            value={"phone": "+79123456789", "password": "password"},
             status_codes=[str(status.HTTP_200_OK)],
         ),
-    ]
+    ],
 )
 class LoginView(APIView):
     """
     Вход пользователя в систему.
     """
+
     def post(self, request, format=None):
         data = request.data
         response = Response()
@@ -183,7 +144,8 @@ class LoginView(APIView):
                     httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
                     samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
                 )
-                csrf.get_token(request)
+                response["X-CSRFToken"] = csrf.get_token(request)
+                print(response)
                 response.data = {"Success": "Login successfully"}
                 return response
             else:
@@ -192,10 +154,40 @@ class LoginView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
         else:
-            return Response(
-                {"Invalid": "Invalid phone or password!!"},
-                status=status.HTTP_404_NOT_FOUND,
+            raise AuthenticationFailed(
+                "Invalid phone or password!!"
             )
+
+
+@extend_schema(
+    tags=["Users"],
+    summary="Logout",
+)
+class LogoutView(APIView):
+    """
+    Выход из системы.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        try:
+            refreshToken = request.COOKIES.get(
+                settings.SIMPLE_JWT["AUTH_REFRESH"]
+            )
+            token = RefreshToken(refreshToken)
+            token.blacklist()
+
+            response: Response = Response()
+            response.delete_cookie(settings.SIMPLE_JWT["AUTH_COOKIE"])
+            response.delete_cookie(settings.SIMPLE_JWT["AUTH_REFRESH"])
+            response.delete_cookie("X-CSRFToken")
+            response.delete_cookie("csrftoken")
+            response["X-CSRFToken"] = None
+            response.data = {"Success": "Logout successfully"}
+            return response
+        except Exception:
+            raise ParseError("Invalid token")
 
 
 @extend_schema(tags=["Users"])
@@ -206,17 +198,14 @@ class LoginView(APIView):
             OpenApiExample(
                 "Пример создания пользователя.",
                 value={
-                    "user": {
-                        "last_name": "Иванов",
-                        "first_name": "Иван"
-                    },
+                    "user": {"last_name": "Иванов", "first_name": "Иван"},
                     "patronymic": "Иванович",
                     "date_birth": "2024-01-01",
-                    "sex": 1
+                    "sex": 1,
                 },
                 status_codes=[str(status.HTTP_200_OK)],
             ),
-        ]
+        ],
     ),
     partial_update=extend_schema(
         summary="Изменение сведений о пользователе.",
@@ -224,15 +213,13 @@ class LoginView(APIView):
             OpenApiExample(
                 "Пример создания пользователя.",
                 value={
-                    "user": {
-                        "last_name": "Иванов"
-                    },
+                    "user": {"last_name": "Иванов"},
                     "patronymic": "Иванович",
-                    "date_birth": "2024-01-01"
+                    "date_birth": "2024-01-01",
                 },
                 status_codes=[str(status.HTTP_200_OK)],
             ),
-        ]
+        ],
     ),
     retrieve=extend_schema(
         summary="Просмотр сведений о пользователе.",

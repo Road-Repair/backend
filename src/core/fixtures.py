@@ -8,4 +8,7 @@ class TestUserFixtures(APITestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = CustomUserFactory()
+
+        cls.user_client = APIClient()
+        cls.user_client.force_authenticate(cls.user)
         cls.anon_client = APIClient()

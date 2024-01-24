@@ -3,10 +3,10 @@ from rest_framework.routers import DefaultRouter
 
 from api.v1.users.views import (
     AccountViewSet,
-    CookieTokenObtainPairView,
     CookieTokenRefreshView,
-    UserViewSet,
     LoginView,
+    LogoutView,
+    UserViewSet,
 )
 
 v1_router = DefaultRouter()
@@ -24,17 +24,14 @@ urlpatterns = [
             }
         ),
         kwargs={"pk": "me"},
+        name="accounts",
     ),
-    path("", include(v1_router.urls)),
-    path(
-        "auth/token/",
-        CookieTokenObtainPairView.as_view(),
-        name="token_obtain_pair",
-    ),
+    path("registry/", include(v1_router.urls)),
     path(
         "auth/token/refresh/",
         CookieTokenRefreshView.as_view(),
         name="token_refresh",
     ),
     path("login/", LoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
 ]
