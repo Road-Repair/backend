@@ -61,6 +61,20 @@ class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         return ReadUserSerializer
 
 
+@extend_schema(
+    tags=["Users"],
+    summary="Логин",
+    examples=[
+        OpenApiExample(
+            "Пример входа пользователя в систему.",
+            value={
+                "phone": "+79123456789",
+                "password": "password"
+            },
+            status_codes=[str(status.HTTP_200_OK)],
+        ),
+    ]
+)
 class CookieTokenObtainPairView(TokenObtainPairView):
     """
     Сохранение токена в Cookie.
@@ -86,7 +100,15 @@ class CookieTokenObtainPairView(TokenObtainPairView):
         return super().finalize_response(request, response, *args, **kwargs)
 
 
+@extend_schema(
+    tags=["Users"],
+    summary="Обновление refresh токена.",
+)
 class CookieTokenRefreshView(TokenRefreshView):
+    """
+    Обновление refresh токена.
+    """
+
     def finalize_response(self, request, response, *args, **kwargs):
         if response.data.get("refresh"):
             response.set_cookie(
@@ -118,7 +140,24 @@ def get_tokens_for_user(user):
     }
 
 
+@extend_schema(
+    tags=["Users"],
+    summary="Логин",
+    examples=[
+        OpenApiExample(
+            "Пример входа пользователя в систему.",
+            value={
+                "phone": "+79123456789",
+                "password": "password"
+            },
+            status_codes=[str(status.HTTP_200_OK)],
+        ),
+    ]
+)
 class LoginView(APIView):
+    """
+    Вход пользователя в систему.
+    """
     def post(self, request, format=None):
         data = request.data
         response = Response()
@@ -159,6 +198,46 @@ class LoginView(APIView):
             )
 
 
+@extend_schema(tags=["Users"])
+@extend_schema_view(
+    update=extend_schema(
+        summary="Изменение сведений о пользователе.",
+        examples=[
+            OpenApiExample(
+                "Пример создания пользователя.",
+                value={
+                    "user": {
+                        "last_name": "Иванов",
+                        "first_name": "Иван"
+                    },
+                    "patronymic": "Иванович",
+                    "date_birth": "2024-01-01",
+                    "sex": 1
+                },
+                status_codes=[str(status.HTTP_200_OK)],
+            ),
+        ]
+    ),
+    partial_update=extend_schema(
+        summary="Изменение сведений о пользователе.",
+        examples=[
+            OpenApiExample(
+                "Пример создания пользователя.",
+                value={
+                    "user": {
+                        "last_name": "Иванов"
+                    },
+                    "patronymic": "Иванович",
+                    "date_birth": "2024-01-01"
+                },
+                status_codes=[str(status.HTTP_200_OK)],
+            ),
+        ]
+    ),
+    retrieve=extend_schema(
+        summary="Просмотр сведений о пользователе.",
+    ),
+)
 class AccountViewSet(
     mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):

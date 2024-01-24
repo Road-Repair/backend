@@ -3,6 +3,10 @@ from django.conf import settings
 
 
 class CustomAuthentication(JWTAuthentication):
+    """
+    Кастомная аутентификация через Cookie.
+    """
+
     def authenticate(self, request):
         header = self.get_header(request)
 

@@ -151,9 +151,13 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "My API Documentation",
-    "DESCRIPTION": "Documentation for road-repair API built with DRF",
+    "TITLE": "YellowGrader Documentation",
+    "DESCRIPTION": "Documentation for YellowGrader API built with DRF",
     "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "filter": True,  # включить поиск по тегам
+    },
 }
 
 EMAIL_FILE = True if os.getenv("EMAIL_FILE") == "YES" else False
