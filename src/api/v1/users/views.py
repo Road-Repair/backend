@@ -154,9 +154,7 @@ class LoginView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
         else:
-            raise AuthenticationFailed(
-                "Invalid phone or password!!"
-            )
+            raise AuthenticationFailed("Invalid phone or password!!")
 
 
 @extend_schema(
