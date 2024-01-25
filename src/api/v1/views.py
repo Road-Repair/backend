@@ -1,13 +1,12 @@
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import (
+    OpenApiExample,
     extend_schema,
     extend_schema_view,
-    OpenApiExample,
 )
 from rest_framework import mixins, status, viewsets
 
 from users.serializers import CreateUserSerializer, ReadUserSerializer
-
 
 User = get_user_model()
 

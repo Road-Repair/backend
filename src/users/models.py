@@ -11,6 +11,12 @@ from users.validators import unique_email
 class CustomUser(AbstractUser):
     """Кастомный юзер."""
 
+    username = models.CharField(
+        verbose_name="Имя пользователя",
+        max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
+        unique=False,
+        default="user",
+    )
     first_name = models.CharField(
         verbose_name="Имя",
         max_length=Limits.MAX_LENGTH_PATRONYMIC.value,

@@ -1,25 +1,20 @@
-from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.contrib.auth import authenticate, get_user_model
 from django.middleware import csrf
 from drf_spectacular.utils import (
+    OpenApiExample,
     extend_schema,
     extend_schema_view,
-    OpenApiExample,
 )
 from rest_framework import mixins, status, viewsets
 from rest_framework.exceptions import AuthenticationFailed, ParseError
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
 
-
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-)
-
-from django.contrib.auth import authenticate
-from django.conf import settings
-
+from api.v1.users.utils import set_access_cookie, set_refresh_cookie
 from users.models import Account
 from users.permissions import IsOwner
 from users.serializers import (
@@ -72,26 +67,25 @@ class CookieTokenRefreshView(TokenRefreshView):
     Обновление refresh токена.
     """
 
-    def finalize_response(self, request, response, *args, **kwargs):
-        if response.data.get("refresh"):
-            response.set_cookie(
-                "refresh_token",
-                response.data["refresh"],
-                max_age=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"],
-                httponly=True,
-            )
-            response.set_cookie(
-                "access_token",
-                response.data["access"],
-                max_age=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
-                httponly=True,
-            )
-            del response.data["refresh"]
-            del response.data["access"]
-            response.data = {"Success": "Token refreshed"}
-        return super().finalize_response(request, response, *args, **kwargs)
-
     serializer_class = CookieTokenRefreshSerializer
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        if response.status_code == status.HTTP_401_UNAUTHORIZED:
+            res = Response()
+            res.data = {
+                "detail": "No valid token found in cookie 'refresh_token'"
+            }
+            res.status_code = response.status_code
+            return super().finalize_response(request, res, *args, **kwargs)
+        if response.data.get("refresh"):
+            set_refresh_cookie(response, response.data)
+            del response.data["refresh"]
+        if response.data.get("access"):
+            set_access_cookie(response, response.data)
+            del response.data["access"]
+        response["X-CSRFToken"] = request.COOKIES.get("csrftoken")
+        response.data = {"Success": "Token refreshed"}
+        return super().finalize_response(request, response, *args, **kwargs)
 
 
 def get_tokens_for_user(user):
@@ -119,6 +113,8 @@ class LoginView(APIView):
     Вход пользователя в систему.
     """
 
+    authentication_classes = ()
+
     def post(self, request, format=None):
         data = request.data
         response = Response()
@@ -128,24 +124,9 @@ class LoginView(APIView):
         if user is not None:
             if user.is_active:
                 data = get_tokens_for_user(user)
-                response.set_cookie(
-                    key=settings.SIMPLE_JWT["AUTH_COOKIE"],
-                    value=data["access"],
-                    expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
-                    secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
-                    httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
-                    samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
-                )
-                response.set_cookie(
-                    key=settings.SIMPLE_JWT["AUTH_REFRESH"],
-                    value=data["refresh"],
-                    expires=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"],
-                    secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
-                    httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
-                    samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
-                )
+                set_access_cookie(response, data)
+                set_refresh_cookie(response, data)
                 response["X-CSRFToken"] = csrf.get_token(request)
-                print(response)
                 response.data = {"Success": "Login successfully"}
                 return response
             else:
@@ -194,10 +175,13 @@ class LogoutView(APIView):
         summary="Изменение сведений о пользователе.",
         examples=[
             OpenApiExample(
-                "Пример создания пользователя.",
+                "Пример изменения данных пользователя.",
                 value={
-                    "user": {"last_name": "Иванов", "first_name": "Иван"},
-                    "patronymic": "Иванович",
+                    "user": {
+                        "last_name": "Some_name",
+                        "first_name": "Some_name",
+                    },
+                    "patronymic": "Some_patronymic",
                     "date_birth": "2024-01-01",
                     "sex": 1,
                 },
@@ -211,8 +195,8 @@ class LogoutView(APIView):
             OpenApiExample(
                 "Пример создания пользователя.",
                 value={
-                    "user": {"last_name": "Иванов"},
-                    "patronymic": "Иванович",
+                    "user": {"last_name": "Some_name"},
+                    "patronymic": "Some_patronymic",
                     "date_birth": "2024-01-01",
                 },
                 status_codes=[str(status.HTTP_200_OK)],

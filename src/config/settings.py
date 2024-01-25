@@ -143,16 +143,38 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=3600 * 24 * 1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=3600 * 24 * 5),
-    "AUTH_COOKIE": "access_token",
-    "AUTH_REFRESH": "refresh_token",
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=int(os.getenv("ACCESS_TOKEN_LIFETIME", 5))
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=int(os.getenv("REFRESH_TOKEN_LIFETIME", 3600 * 24 * 14))
+    ),
+    "AUTH_COOKIE": os.getenv("AUTH_COOKIE", "access"),
+    "AUTH_REFRESH": os.getenv("AUTH_REFRESH", "refresh"),
     "AUTH_COOKIE_DOMAIN": None,
     "AUTH_COOKIE_SECURE": False,
     "AUTH_COOKIE_HTTP_ONLY": True,
     "AUTH_COOKIE_PATH": "/",
     "AUTH_COOKIE_SAMESITE": "Lax",
 }
+
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_TRUSTED_ORIGINS = [os.getenv("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1")]
+CORS_TRUSTED_ORIGINS = [os.getenv("CORS_TRUSTED_ORIGINS", "http://127.0.0.1")]
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "YellowGrader Documentation",
@@ -178,21 +200,3 @@ else:
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 SERVER_EMAIL = os.getenv("EMAIL_HOST_USER")
-
-CORS_ALLOW_CREDENTIALS = True
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIEHTTP_ONLY = True
-CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SAMESITE = "None"
-CSRF_TRUSTED_ORIGINS = [os.getenv("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1")]
-CORS_TRUSTED_ORIGINS = [os.getenv("CORS_TRUSTED_ORIGINS", "http://127.0.0.1")]
-CORS_ALLOW_METHODS = (
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-)
