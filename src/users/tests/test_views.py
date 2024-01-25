@@ -43,12 +43,17 @@ class TestUser(TestUserFixtures):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_change_account(self):
+        username = "some_username"
         patronymic = "some_name"
         date_birth = timezone.now().date() - timedelta(weeks=55 * 18)
         last_name = "last_name"
         first_name = "first_name"
         data = {
-            "user": {"last_name": last_name, "first_name": first_name},
+            "user": {
+                "username": username,
+                "last_name": last_name,
+                "first_name": first_name,
+            },
             "patronymic": patronymic,
             "date_birth": date_birth,
             "sex": 1,

@@ -178,6 +178,7 @@ class LogoutView(APIView):
                 "Пример изменения данных пользователя.",
                 value={
                     "user": {
+                        "username": "some_username",
                         "last_name": "Some_name",
                         "first_name": "Some_name",
                     },

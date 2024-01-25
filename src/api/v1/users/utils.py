@@ -2,10 +2,7 @@ from django.conf import settings
 from rest_framework.response import Response
 
 
-def set_refresh_cookie(
-    response: Response,
-    data: dict
-) -> Response:
+def set_refresh_cookie(response: Response, data: dict) -> Response:
     response.set_cookie(
         key=settings.SIMPLE_JWT["AUTH_REFRESH"],
         value=data["refresh"],
@@ -16,10 +13,7 @@ def set_refresh_cookie(
     )
 
 
-def set_access_cookie(
-    response: Response,
-    data: dict
-) -> Response:
+def set_access_cookie(response: Response, data: dict) -> Response:
     response.set_cookie(
         key=settings.SIMPLE_JWT["AUTH_COOKIE"],
         value=data["access"],
