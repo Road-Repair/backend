@@ -147,7 +147,7 @@ SIMPLE_JWT = {
         minutes=int(os.getenv("ACCESS_TOKEN_LIFETIME", 5))
     ),
     "REFRESH_TOKEN_LIFETIME": timedelta(
-        days=int(os.getenv("REFRESH_TOKEN_LIFETIME", 3600 * 24 * 14))
+        days=int(os.getenv("REFRESH_TOKEN_LIFETIME", 14))
     ),
     "AUTH_COOKIE": os.getenv("AUTH_COOKIE", "access"),
     "AUTH_REFRESH": os.getenv("AUTH_REFRESH", "refresh"),
