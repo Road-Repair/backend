@@ -9,8 +9,7 @@ TRUE_VALUES = ["1", "True", "true", "YES", "yes"]
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv_path = os.path.join(os.path.dirname(__file__), "../../.env")
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
+load_dotenv(dotenv_path)
 
 SECRET_KEY = os.getenv("SECRET_KEY", default="yours-secret-key")
 DEBUG = os.getenv("DEBUG") in TRUE_VALUES
@@ -32,11 +31,11 @@ INSTALLED_APPS = [
     "rest_framework.documentation",
     "drf_spectacular",
     "corsheaders",
-    "users.apps.UsersConfig",
-    "locations.apps.LocationsConfig",
-    "projects.apps.ProjectsConfig",
-    "transactions.apps.TransactionsConfig",
-    "news.apps.NewsConfig",
+    "users",
+    "locations",
+    "projects",
+    "transactions",
+    "news",
 ]
 
 MIDDLEWARE = [
