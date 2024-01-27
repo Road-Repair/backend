@@ -17,7 +17,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(", ")
 PASSWORD_LENGTH = os.getenv("PASSWORD_LENGTH", default=10)
 PASSWORD_SYMBOLS = os.getenv(
     "PASSWORD_SYMBOLS",
-    default="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+    default="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789",
 )
 
 INSTALLED_APPS = [
