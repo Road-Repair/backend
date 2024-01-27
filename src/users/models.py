@@ -4,25 +4,30 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from core.choices_classes import Role, Sex
 from core.enums import Limits
-from users.managers import UserManager
+from users.managers import AccountManager, UserManager
 from users.validators import unique_email
 
 
 class CustomUser(AbstractUser):
     """Кастомный юзер."""
 
-    username = None
+    username = models.CharField(
+        verbose_name="Имя пользователя",
+        max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
+        unique=False,
+        default="user",
+    )
     first_name = models.CharField(
         verbose_name="Имя",
         max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     last_name = models.CharField(
         verbose_name="Фамилия",
         max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     email = models.EmailField(
         verbose_name="Адрес электронной почты",
@@ -55,10 +60,7 @@ class CustomUser(AbstractUser):
         default_related_name = "user"
 
     def __str__(self) -> str:
-        return (
-            f"{self.last_name} {self.first_name[0].upper()}. "
-            f"{self.account.patronymic[0] + '.' if self.account.patronymic else ''} "
-        )
+        return self.username
 
     @property
     def is_admin(self):
@@ -101,13 +103,12 @@ class Account(models.Model):
         null=True,
     )
 
+    objects = AccountManager()
+
     class Meta:
         verbose_name = "Аккаунт"
         verbose_name_plural = "Аккаунты"
         default_related_name = "account"
 
     def __str__(self) -> str:
-        return (
-            f"{self.user.last_name} {self.user.first_name[0].upper()}. "
-            f"{self.patronymic[0] + '.' if self.patronymic else ''} "
-        )
+        return self.user.username
