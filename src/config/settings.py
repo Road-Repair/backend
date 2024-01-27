@@ -14,8 +14,11 @@ load_dotenv(dotenv_path)
 SECRET_KEY = os.getenv("SECRET_KEY", default="yours-secret-key")
 DEBUG = os.getenv("DEBUG") in TRUE_VALUES
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(", ")
-PASSWORD_LENGTH = os.getenv("PASSWORD_LENGTH")
-PASSWORD_SYMBOLS = os.getenv("PASSWORD_SYMBOLS")
+PASSWORD_LENGTH = os.getenv("PASSWORD_LENGTH", default=10)
+PASSWORD_SYMBOLS = os.getenv(
+    "PASSWORD_SYMBOLS",
+    default="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
