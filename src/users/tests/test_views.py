@@ -1,8 +1,11 @@
+import re
+
 from datetime import timedelta
 from http import HTTPStatus
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.urls import reverse
 from django.utils import timezone
 
@@ -109,3 +112,33 @@ class TestUser(TestUserFixtures):
     def test_refresh_tokens(self):
         response = self.anon_client.post(reverse("token_refresh"))
         self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+    def test_password_reset(self):
+        response_1 = self.anon_client.post(
+            reverse("password_reset:reset-password-request"),
+            data={"email": self.user_3.email},
+        )
+        self.assertEqual(response_1.status_code, HTTPStatus.OK)
+
+        email_content = mail.outbox[0].body
+        token_re = r": ([A-Za-z0-9:\-]+)"
+        match = re.search(token_re, email_content)
+        token = match.group(1)
+
+        response_2 = self.anon_client.post(
+            reverse("password_reset:reset-password-validate"),
+            data={"token": token},
+        )
+        self.assertEqual(response_2.status_code, HTTPStatus.OK)
+
+        new_password = "new_PAssword123"
+        response_3 = self.anon_client.post(
+            reverse("password_reset:reset-password-confirm"),
+            data={"token": token, "password": new_password},
+        )
+        self.assertEqual(response_3.status_code, HTTPStatus.OK)
+
+        data = {"phone": self.user_3.phone, "password": new_password}
+        response_4 = self.client_3.post(reverse("login"), data=data)
+        self.assertEqual(response_4.status_code, HTTPStatus.OK)
+        self.assertEqual(response_4.data, {"Success": "Login successfully"})

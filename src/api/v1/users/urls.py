@@ -9,9 +9,8 @@ from api.v1.users.views import (
     UserViewSet,
 )
 
-v1_router = DefaultRouter()
-
-v1_router.register("", UserViewSet, basename="users")
+user_router = DefaultRouter()
+user_router.register("", UserViewSet, basename="users")
 
 urlpatterns = [
     re_path(
@@ -26,7 +25,7 @@ urlpatterns = [
         kwargs={"pk": "me"},
         name="accounts",
     ),
-    path("registry/", include(v1_router.urls)),
+    path("registry/", include(user_router.urls)),
     path(
         "auth/token/refresh/",
         CookieTokenRefreshView.as_view(),
@@ -34,4 +33,8 @@ urlpatterns = [
     ),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    re_path(
+        r"^password_reset/",
+        include("django_rest_passwordreset.urls", namespace="password_reset"),
+    ),
 ]
