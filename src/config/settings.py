@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "rest_framework.documentation",
     "drf_spectacular",
     "corsheaders",
+    "django_rest_passwordreset",
     "users",
     "locations",
     "projects",
