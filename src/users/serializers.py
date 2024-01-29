@@ -1,6 +1,11 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import (
+    CharField,
+    ModelSerializer,
+    Serializer,
+    ValidationError,
+)
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
@@ -115,3 +120,31 @@ class CookieTokenRefreshSerializer(TokenRefreshSerializer):
             raise InvalidToken(
                 "No valid token found in cookie 'refresh_token'"
             )
+
+
+class PasswordChangeSerializer(Serializer):
+    """
+    Сериализатор для смены пароля.
+    """
+
+    current_password = CharField(required=True)
+    new_password = CharField(required=True)
+    new_password_confirmation = CharField(required=True)
+
+    def validate(self, attrs):
+        user = self.initial_data["user"]
+        if not user.check_password(attrs["current_password"]):
+            raise ValidationError({"password": "wrong password"})
+        if (
+            not self.initial_data["new_password"]
+            == self.initial_data["new_password_confirmation"]
+        ):
+            raise ValidationError(
+                {
+                    "new_password": (
+                        "new_password and new_password_confirmation"
+                        " do not match"
+                    )
+                }
+            )
+        return attrs
