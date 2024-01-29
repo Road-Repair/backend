@@ -19,6 +19,13 @@ class AbstractLocationModel(models.Model):
     title = models.CharField(
         "Наименование", max_length=Limits.MAX_LENGTH_REGION_TITLE
     )
+    wiki_link = models.URLField(
+        "Ссылка на статью на Википедии",
+        max_length=Limits.MAX_LENGTH_LINK,
+        blank=True,
+        null=True,
+    )
+    has_subregions = models.BooleanField("Имеет субрегионы", default=False)
 
     class Meta:
         abstract = True
@@ -36,6 +43,9 @@ class FederationEntity(AbstractLocationModel):
         "Наименование", max_length=Limits.MAX_LENGTH_REGION_TITLE, unique=True
     )
     index = models.IntegerField("Номер Субъекта", unique=True, db_index=True)
+    emblem = models.ImageField(
+        "Герб региона", upload_to="f_entities_emblems", blank=True, null=True
+    )
 
     class Meta:
         verbose_name = "Субъект Федерации"
