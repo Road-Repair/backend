@@ -7,6 +7,7 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import AuthenticationFailed, ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -21,6 +22,7 @@ from users.serializers import (
     AccountSerializer,
     CookieTokenRefreshSerializer,
     CreateUserSerializer,
+    PasswordChangeSerializer,
     ReadUserSerializer,
     UpdateAccountSerializer,
 )
@@ -229,3 +231,35 @@ class AccountViewSet(
         if self.action in ["update", "partial_update"]:
             return UpdateAccountSerializer
         return AccountSerializer
+
+
+@extend_schema(
+    tags=["Users"],
+    summary="Изменение пароля пользователя.",
+    request=PasswordChangeSerializer,
+    examples=[
+        OpenApiExample(
+            "Пример изменения пароля пользователя.",
+            value={
+                "current_password": "superPuper",
+                "new_password": "superPuper2",
+            },
+            status_codes=[str(status.HTTP_204_NO_CONTENT)],
+        ),
+    ],
+)
+@api_view(["POST"])
+@permission_classes([IsOwner])
+def set_password(request):
+    data = request.data
+    data["user"] = request.user
+    serializer = PasswordChangeSerializer(data=data)
+    if serializer.is_valid():
+        user = request.user
+        user.set_password(request.data["new_password"])
+        user.save()
+        return Response(
+            data={"Success": "Password changed successfully"},
+            status=status.HTTP_200_OK,
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

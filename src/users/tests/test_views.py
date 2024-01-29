@@ -1,5 +1,4 @@
 import re
-
 from datetime import timedelta
 from http import HTTPStatus
 
@@ -98,9 +97,8 @@ class TestUser(TestUserFixtures):
 
     def test_user_login(self):
         phone = "+71000000000"
-        password = "super_password"
-        CustomUserFactory(phone=phone, password=password)
-        data = {"phone": phone, "password": password}
+        CustomUserFactory(phone=phone, password=self.password)
+        data = {"phone": phone, "password": self.password}
         response = self.client_1.post(reverse("login"), data=data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(response.data, {"Success": "Login successfully"})
@@ -131,14 +129,38 @@ class TestUser(TestUserFixtures):
         )
         self.assertEqual(response_2.status_code, HTTPStatus.OK)
 
-        new_password = "new_PAssword123"
         response_3 = self.anon_client.post(
             reverse("password_reset:reset-password-confirm"),
-            data={"token": token, "password": new_password},
+            data={"token": token, "password": self.new_password},
         )
         self.assertEqual(response_3.status_code, HTTPStatus.OK)
 
-        data = {"phone": self.user_3.phone, "password": new_password}
+        data = {"phone": self.user_3.phone, "password": self.new_password}
         response_4 = self.client_3.post(reverse("login"), data=data)
         self.assertEqual(response_4.status_code, HTTPStatus.OK)
         self.assertEqual(response_4.data, {"Success": "Login successfully"})
+
+    def test_password_change(self):
+        response_1 = self.anon_client.post(
+            reverse("change_password"),
+            data={
+                "current_password": self.password,
+                "new_password": self.new_password,
+                "new_password_confirmation": self.new_password,
+            },
+        )
+        self.assertEqual(response_1.status_code, HTTPStatus.UNAUTHORIZED)
+
+        response_2 = self.client_4.post(
+            reverse("change_password"),
+            data={
+                "current_password": self.password,
+                "new_password": self.new_password,
+                "new_password_confirmation": self.new_password,
+            },
+            format="json",
+        )
+        self.assertEqual(response_2.status_code, HTTPStatus.OK)
+        self.assertEqual(
+            response_2.data, {"Success": "Password changed successfully"}
+        )

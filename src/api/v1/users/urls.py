@@ -7,6 +7,7 @@ from api.v1.users.views import (
     LoginView,
     LogoutView,
     UserViewSet,
+    set_password,
 )
 
 user_router = DefaultRouter()
@@ -37,4 +38,5 @@ urlpatterns = [
         r"^password_reset/",
         include("django_rest_passwordreset.urls", namespace="password_reset"),
     ),
+    path("change-password/", set_password, name="change_password"),
 ]
