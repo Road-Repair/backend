@@ -5,13 +5,13 @@ from locations.models import FederationEntity, Municipality, Region, Settlement
 
 @admin.register(FederationEntity)
 class AdminFederationEntity(admin.ModelAdmin):
-    list_display = ("index", "title")
+    list_display = ("index", "title", "has_subregions", "projects_create")
     search_fields = ("index", "title")
 
 
 @admin.register(Municipality)
 class AdminMunicipality(admin.ModelAdmin):
-    list_display = ("title",)
+    list_display = ("title", "has_subregions", "projects_create")
     search_fields = (
         "title",
         "region__title",
@@ -22,7 +22,7 @@ class AdminMunicipality(admin.ModelAdmin):
 
 @admin.register(Region)
 class AdminRegion(admin.ModelAdmin):
-    list_display = ("title",)
+    list_display = ("title", "has_subregions", "projects_create")
     search_fields = (
         "title",
         "federation_entity__title",
@@ -32,7 +32,7 @@ class AdminRegion(admin.ModelAdmin):
 
 @admin.register(Settlement)
 class AdminSettlement(admin.ModelAdmin):
-    list_display = ("title",)
+    list_display = ("title", "has_subregions", "projects_create")
     search_fields = (
         "title",
         "мunicipality__title",

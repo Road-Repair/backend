@@ -38,3 +38,7 @@ class LocationsModelsTest(TestCase):
         self.assertFalse(self.region.projects_create)
         self.assertFalse(self.muncipality.projects_create)
         self.assertTrue(self.settlement.projects_create)
+        self.assertFalse(self.federal_entity.has_subregions)
+        self.assertFalse(self.region.has_subregions)
+        self.assertFalse(self.muncipality.has_subregions)
+        self.assertFalse(self.settlement.has_subregions)
