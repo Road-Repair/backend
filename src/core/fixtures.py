@@ -1,5 +1,11 @@
 from rest_framework.test import APIClient, APITestCase
 
+from locations.tests.factories import (
+    FederationEntityFactory,
+    MunicipalityFactory,
+    RegionFactory,
+    SettlementFactory,
+)
 from users.tests.factories import CustomUserFactory
 
 
@@ -24,3 +30,27 @@ class TestUserFixtures(APITestCase):
         cls.client_4 = APIClient()
         cls.client_4.force_authenticate(cls.user_4)
         cls.anon_client = APIClient()
+
+
+class LocationsFixtures(TestUserFixtures):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.federation_entity_1 = FederationEntityFactory()
+        cls.federation_entity_2 = FederationEntityFactory()
+        cls.region_1_1 = RegionFactory(
+            federation_entity=cls.federation_entity_1
+        )
+        cls.region_1_1 = RegionFactory(
+            federation_entity=cls.federation_entity_1
+        )
+        cls.region_2_1 = RegionFactory(
+            federation_entity=cls.federation_entity_2
+        )
+        cls.region_2_2 = RegionFactory(
+            federation_entity=cls.federation_entity_2
+        )
+        cls.municipality_1 = MunicipalityFactory(region=cls.region_1_1)
+        cls.municipality_2 = MunicipalityFactory(region=cls.region_2_1)
+        cls.settlement_1 = SettlementFactory(municipality=cls.municipality_1)
+        cls.settlement_2 = SettlementFactory(municipality=cls.municipality_2)

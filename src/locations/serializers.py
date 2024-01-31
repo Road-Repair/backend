@@ -5,7 +5,7 @@ from locations.models import (
     FederationEntity,
     Municipality,
     Region,
-    Settlement
+    Settlement,
 )
 
 
@@ -17,6 +17,7 @@ class AbstractLocationSerializer(ModelSerializer):
     class Meta:
         model = AbstractLocationModel
         fields = [
+            "id",
             "title",
             "wiki_link",
             "projects_create",
@@ -67,9 +68,7 @@ class MunicipalitySerializer(ModelSerializer):
     class Meta:
         model = Municipality
         fields = AbstractLocationSerializer.Meta.fields + ["region"]
-        read_only_fields = AbstractLocationSerializer.Meta.fields + [
-            "region"
-        ]
+        read_only_fields = AbstractLocationSerializer.Meta.fields + ["region"]
 
 
 class SettlementSerializer(ModelSerializer):
