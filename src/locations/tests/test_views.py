@@ -117,9 +117,8 @@ class LocationTests(LocationsFixtures):
         fed_ent_index = self.federation_entity_1.index
         fed_ent_id = self.federation_entity_1.id
         response = self.client.get(
-            reverse(
-                "locations:regions"
-            ) + f"?federation_entity_title={fed_ent_title}"
+            reverse("locations:regions")
+            + f"?federation_entity_title={fed_ent_title}"
         )
         self.assertEqual(
             len(response.data),
@@ -128,9 +127,8 @@ class LocationTests(LocationsFixtures):
             ).count(),
         )
         response_1 = self.client.get(
-            reverse(
-                "locations:regions"
-            ) + f"?federation_entity_index={fed_ent_index}"
+            reverse("locations:regions")
+            + f"?federation_entity_index={fed_ent_index}"
         )
         self.assertEqual(
             len(response_1.data),
@@ -139,9 +137,7 @@ class LocationTests(LocationsFixtures):
             ).count(),
         )
         response_2 = self.client.get(
-            reverse(
-                "locations:regions"
-            ) + f"?federation_entity={fed_ent_id}"
+            reverse("locations:regions") + f"?federation_entity={fed_ent_id}"
         )
         self.assertEqual(
             len(response_2.data),
@@ -154,9 +150,8 @@ class LocationTests(LocationsFixtures):
         region_title = self.region_1_1.title
         region_id = self.region_2_1.id
         response = self.client.get(
-            reverse(
-                "locations:municipalities"
-            ) + f"?region_title={region_title}"
+            reverse("locations:municipalities")
+            + f"?region_title={region_title}"
         )
         self.assertEqual(
             len(response.data),
@@ -165,24 +160,19 @@ class LocationTests(LocationsFixtures):
             ).count(),
         )
         response_1 = self.client.get(
-            reverse(
-                "locations:municipalities"
-            ) + f"?region={region_id}"
+            reverse("locations:municipalities") + f"?region={region_id}"
         )
         self.assertEqual(
             len(response_1.data),
-            Municipality.objects.filter(
-                region__id__exact=region_id
-            ).count(),
+            Municipality.objects.filter(region__id__exact=region_id).count(),
         )
 
     def test_settlements_filter(self):
         municipality_title = self.municipality_1.title
         municipality_id = self.municipality_2.id
         response = self.client.get(
-            reverse(
-                "locations:settlements"
-            ) + f"?municipality_title={municipality_title}"
+            reverse("locations:settlements")
+            + f"?municipality_title={municipality_title}"
         )
         self.assertEqual(
             len(response.data),
@@ -191,9 +181,8 @@ class LocationTests(LocationsFixtures):
             ).count(),
         )
         response_1 = self.client.get(
-            reverse(
-                "locations:settlements"
-            ) + f"?municipality={municipality_id}"
+            reverse("locations:settlements")
+            + f"?municipality={municipality_id}"
         )
         self.assertEqual(
             len(response_1.data),
