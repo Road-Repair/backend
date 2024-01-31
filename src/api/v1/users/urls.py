@@ -28,7 +28,7 @@ urlpatterns = [
     ),
     path("registry/", include(user_router.urls)),
     path(
-        "auth/token/refresh/",
+        "token-refresh/",
         CookieTokenRefreshView.as_view(),
         name="token_refresh",
     ),
