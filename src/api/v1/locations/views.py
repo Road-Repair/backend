@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema
 from rest_framework import filters, generics
 
 from api.v1.locations.filters import (
@@ -16,11 +16,9 @@ from locations.serializers import (
 )
 
 
-@extend_schema(tags=["Locations"])
-@extend_schema_view(
-    list=extend_schema(
-        summary="Получение списка Субъектов Федерации.",
-    ),
+@extend_schema(
+    tags=["Locations"],
+    summary="Получение списка Субъектов Федерации.",
 )
 class FederationEntityView(generics.ListAPIView):
     """
@@ -33,11 +31,9 @@ class FederationEntityView(generics.ListAPIView):
     search_fields = ["index", "title"]
 
 
-@extend_schema(tags=["Locations"])
-@extend_schema_view(
-    list=extend_schema(
-        summary="Получение списка районов.",
-    ),
+@extend_schema(
+    tags=["Locations"],
+    summary="Получение списка районов.",
 )
 class RegionView(generics.ListAPIView):
     """
@@ -51,11 +47,9 @@ class RegionView(generics.ListAPIView):
     search_fields = ["title"]
 
 
-@extend_schema(tags=["Locations"])
-@extend_schema_view(
-    list=extend_schema(
-        summary="Получение списка муниципалитетов.",
-    ),
+@extend_schema(
+    tags=["Locations"],
+    summary="Получение списка муниципалитетов.",
 )
 class MunicipalityView(generics.ListAPIView):
     """
@@ -69,11 +63,9 @@ class MunicipalityView(generics.ListAPIView):
     search_fields = ["title"]
 
 
-@extend_schema(tags=["Locations"])
-@extend_schema_view(
-    list=extend_schema(
-        summary="Получение списка населенных пунктов.",
-    ),
+@extend_schema(
+    tags=["Locations"],
+    summary="Получение списка населенных пунктов.",
 )
 class SettlementView(generics.ListAPIView):
     """
