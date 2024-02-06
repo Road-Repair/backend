@@ -23,9 +23,9 @@ class WorkTypes(models.IntegerChoices):
 
 
 class StatusOfProject(models.IntegerChoices):
-    CREATED = 0, "Создан"
-    CONFIRMED = 1, "Подтвержден"
-    CANCELLED = 2, "Отменен"
-    FUNDRASING = 3, "Сбор средств"
-    AT_WORK = 4, "В работе"
-    FINISHED = 5, "Завершен"
+    CANCELLED = 0, "Отменен"
+    CREATED = 1, "Создан"
+    CONFIRMED = 2, "Подтвержден"
+    FUNDRASING = 4, "Сбор средств"
+    AT_WORK = 5, "В работе"
+    FINISHED = 6, "Завершен"

@@ -5,6 +5,7 @@ from django.db import models
 from core.choices_classes import ProjectImageTypes, StatusOfProject, WorkTypes
 from core.enums import Limits
 from projects.utils import path_to_save_project_photo
+from projects.managers import ProjectManager, ProjectStatusImageManager
 
 
 class Project(models.Model):
@@ -23,7 +24,7 @@ class Project(models.Model):
         verbose_name="Модель приложения locations",
         limit_choices_to=limit
     )
-    object_id = models.IntegerField("ID объекта")
+    object_id = models.PositiveIntegerField("ID объекта")
     location = GenericForeignKey("content_type", "object_id")
     number = models.CharField(
         "Номер проекта",
@@ -45,13 +46,28 @@ class Project(models.Model):
     )
     needed_promotion = models.BooleanField("Нужно продвижение", default=False)
 
+    objects = ProjectManager()
+
     class Meta:
         verbose_name = "Проект"
         verbose_name_plural = "Проекты"
         default_related_name = "projects"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.number
+
+    def promote(self) -> None:
+        self.needed_promotion = True
+        self.save()
+
+    def change_status(self, new_status: int) -> None:
+        if self.actual_status != 0:
+            self.actual_status = new_status
+            self.save
+            "ProjectStatus".objects.create(
+                status=new_status,
+                project=self
+            )
 
 
 class ProjectImage(models.Model):
@@ -74,6 +90,8 @@ class ProjectImage(models.Model):
         default=ProjectImageTypes.BEFORE,
         max_length=Limits.MAX_LENGTH_IMAGE_TYPE,
     )
+
+    objects = ProjectStatusImageManager()
 
     class Meta:
         verbose_name = "Фотография для проекта"
@@ -98,9 +116,11 @@ class ProjectStatus(models.Model):
     )
     created_at = models.DateField("Дата присваивания", auto_now=True)
 
+    objects = ProjectStatusImageManager()
+
     class Meta:
         verbose_name = "Статус проекта"
         verbose_name_plural = "Статусы проектов"
 
     def __str__(self):
-        return f"{self.project} {self.status}"
+        return f"Проект {self.project}, статус {self.status}"
