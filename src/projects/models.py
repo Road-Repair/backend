@@ -12,40 +12,38 @@ class Project(models.Model):
     Модель проектов.
     """
 
+    limit = (
+        models.Q(app_label="locations", model="region")
+        | models.Q(app_label="locations", model="municipality")
+        | models.Q(app_label="locations", model="settlement")
+    )
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
-        verbose_name="Модель приложения locations"
+        verbose_name="Модель приложения locations",
+        limit_choices_to=limit
     )
-    object_id = models.IntegerField(
-        "ID объекта"
-    )
+    object_id = models.IntegerField("ID объекта")
     location = GenericForeignKey("content_type", "object_id")
     number = models.CharField(
         "Номер проекта",
-        max_length=Limits.MAX_LENGTH_PROJECT_NUMBER
+        max_length=Limits.MAX_LENGTH_PROJECT_NUMBER.value,
+        unique=True,
     )
     address = models.CharField(
-        "Адрес",
-        max_length=Limits.MAX_LENGTH_PROJECT_ADDRESS
+        "Адрес", max_length=Limits.MAX_LENGTH_PROJECT_ADDRESS.value
     )
-    work_type = models.IntegerField(
-        "Вид работ",
-        choices=WorkTypes.choices
-    )
+    work_type = models.IntegerField("Вид работ", choices=WorkTypes.choices)
     decription = models.TextField(
         "Описание проекта",
-        max_length=Limits.MAX_LENGTH_PROJECT_DESCRIPTION
+        max_length=Limits.MAX_LENGTH_PROJECT_DESCRIPTION.value,
     )
     actual_status = models.IntegerField(
         "Текущий статус",
         choices=StatusOfProject.choices,
-        default=StatusOfProject.CREATED
+        default=StatusOfProject.CREATED,
     )
-    needed_promotion = models.BooleanField(
-        "Нужно продвижение",
-        default=False
-    )
+    needed_promotion = models.BooleanField("Нужно продвижение", default=False)
 
     class Meta:
         verbose_name = "Проект"
@@ -68,13 +66,13 @@ class ProjectImage(models.Model):
         "Фотография",
         upload_to=path_to_save_project_photo,
         blank=True,
-        null=True
+        null=True,
     )
     type = models.CharField(
         "До или после",
         choices=ProjectImageTypes.choices,
         default=ProjectImageTypes.BEFORE,
-        max_length=Limits.MAX_LENGTH_IMAGE_TYPE
+        max_length=Limits.MAX_LENGTH_IMAGE_TYPE,
     )
 
     class Meta:
@@ -93,15 +91,12 @@ class ProjectStatus(models.Model):
     status = models.IntegerField(
         "Статус",
         choices=StatusOfProject.choices,
-        default=StatusOfProject.CREATED
+        default=StatusOfProject.CREATED,
     )
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="statuses"
     )
-    created_at = models.DateField(
-        "Дата присваивания",
-        auto_now=True
-    )
+    created_at = models.DateField("Дата присваивания", auto_now=True)
 
     class Meta:
         verbose_name = "Статус проекта"
