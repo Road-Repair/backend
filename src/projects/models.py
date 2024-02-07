@@ -1,11 +1,14 @@
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from core.choices_classes import ProjectImageTypes, StatusOfProject, WorkTypes
 from core.enums import Limits
-from projects.utils import path_to_save_project_photo
 from projects.managers import ProjectManager, ProjectStatusImageManager
+from projects.utils import path_to_save_project_photo
+
+User = get_user_model()
 
 
 class Project(models.Model):
@@ -13,16 +16,19 @@ class Project(models.Model):
     Модель проектов.
     """
 
+    initiator = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Инициатор проекта"
+    )
     limit = (
         models.Q(app_label="locations", model="region")
-        | models.Q(app_label="locations", model="municipality")
+        | models.Q(app_label="locations", model="federationentity")
         | models.Q(app_label="locations", model="settlement")
     )
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
         verbose_name="Модель приложения locations",
-        limit_choices_to=limit
+        limit_choices_to=limit,
     )
     object_id = models.PositiveIntegerField("ID объекта")
     location = GenericForeignKey("content_type", "object_id")
@@ -63,11 +69,8 @@ class Project(models.Model):
     def change_status(self, new_status: int) -> None:
         if self.actual_status != 0:
             self.actual_status = new_status
-            self.save
-            "ProjectStatus".objects.create(
-                status=new_status,
-                project=self
-            )
+            self.save()
+            ProjectStatus.objects.create(status=new_status, project=self)
 
 
 class ProjectImage(models.Model):

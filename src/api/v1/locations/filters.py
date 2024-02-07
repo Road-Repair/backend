@@ -1,8 +1,4 @@
-from django_filters import (
-    NumberFilter,
-    FilterSet,
-    ModelChoiceFilter,
-)
+from django_filters import FilterSet, ModelChoiceFilter, NumberFilter
 
 from locations.models import FederationEntity, Municipality, Region, Settlement
 

@@ -12,7 +12,7 @@ TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 
 @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
-class NewssModelsTest(TestCase):
+class NewsModelsTest(TestCase):
     """
     Класс для тестирования моделей приложения news.
     """

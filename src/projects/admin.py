@@ -10,13 +10,16 @@ class ProjectAdmin(admin.ModelAdmin):
         "actual_status",
         "work_type",
     ]
+    search_fields = ["number"]
+    list_filter = ["actual_status", "work_type"]
 
 
 @admin.register(ProjectImage)
 class ProjectImageAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ["project__number"]
+    list_filter = ["type"]
 
 
 @admin.register(ProjectStatus)
 class StatusOfProjectAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ["project__number"]

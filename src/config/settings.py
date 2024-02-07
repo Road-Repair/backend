@@ -13,7 +13,10 @@ load_dotenv(dotenv_path)
 
 SECRET_KEY = os.getenv("SECRET_KEY", default="yours-secret-key")
 DEBUG = os.getenv("DEBUG") in TRUE_VALUES
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(", ")
+if "test" in sys.argv:
+    ALLOWED_HOSTS = ["testserver"]
+else:
+    ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(", ")
 PASSWORD_LENGTH = os.getenv("PASSWORD_LENGTH", default=10)
 PASSWORD_SYMBOLS = os.getenv(
     "PASSWORD_SYMBOLS",
@@ -75,8 +78,15 @@ TEMPLATES = [
 ASGI_APPLICATION = "config.asgi.application"
 # WSGI_APPLICATION = 'config.wsgi.application'
 
-PROD_DB = os.getenv("PROD_DB", default="true") in TRUE_VALUES
-if PROD_DB and "test" not in sys.argv:
+PROD_DB = os.getenv("PROD_DB", default="false") in TRUE_VALUES
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
+    }
+elif PROD_DB and "test" not in sys.argv:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",

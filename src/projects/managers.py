@@ -10,5 +10,9 @@ class ProjectStatusImageManager(models.Manager):
 
 class ProjectManager(models.Manager):
     def get_queryset(self) -> QuerySet:
-        qs = super().get_queryset()
-        return qs.prefetch_related("images", "statuses")
+        return (
+            super()
+            .get_queryset()
+            .select_related("initiator")
+            .prefetch_related("images", "statuses")
+        )

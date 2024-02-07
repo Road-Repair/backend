@@ -40,6 +40,7 @@ class ReadUserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = [
+            "id",
             "phone",
             "email",
             "username",
