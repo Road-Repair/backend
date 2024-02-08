@@ -31,7 +31,10 @@ class ProjectsModelsTest(LocationsFixtures):
         self.assertEqual(str(self.project_1), self.project_1.number)
         self.assertEqual(
             str(ProjectStatus.objects.get(project=self.project_1)),
-            f"Проект {self.project_1.number}, статус {StatusOfProject.CREATED}",
+            (
+                f"Проект {self.project_1.number},"
+                f" статус {StatusOfProject.CREATED}"
+            ),
         )
 
     def test_models_default_values(self):
