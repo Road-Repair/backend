@@ -1,5 +1,4 @@
-from django.test import TestCase
-
+from core.fixtures import BaseTestCase
 from locations.tests.factories import (
     FederationEntityFactory,
     MunicipalityFactory,
@@ -8,7 +7,7 @@ from locations.tests.factories import (
 )
 
 
-class LocationsModelsTest(TestCase):
+class LocationsModelsTest(BaseTestCase):
     """
     Класс для тестирования моделей приложения locations.
     """
