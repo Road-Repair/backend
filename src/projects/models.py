@@ -41,7 +41,7 @@ class Project(models.Model):
         "Адрес", max_length=Limits.MAX_LENGTH_PROJECT_ADDRESS.value
     )
     work_type = models.IntegerField("Вид работ", choices=WorkTypes.choices)
-    decription = models.TextField(
+    description = models.TextField(
         "Описание проекта",
         max_length=Limits.MAX_LENGTH_PROJECT_DESCRIPTION.value,
     )

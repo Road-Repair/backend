@@ -1,8 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 
-from core.choices_classes import StatusOfProject
+from core.choices_classes import ProjectImageTypes, StatusOfProject
 from core.fixtures import LocationsFixtures
-from projects.models import Project, ProjectStatus
+from projects.models import Project, ProjectImage, ProjectStatus
 from projects.tests.factories import ProjectFactory
 
 
@@ -21,6 +21,9 @@ class ProjectsModelsTest(LocationsFixtures):
             ),
             initiator=cls.user,
         )
+        cls.image_for_project_1 = ProjectImage.objects.create(
+            project=cls.project_1, image=cls.uploaded
+        )
 
     def test_project_creates(self):
         self.assertTrue(
@@ -36,10 +39,17 @@ class ProjectsModelsTest(LocationsFixtures):
                 f" статус {StatusOfProject.CREATED}"
             ),
         )
+        self.assertEqual(
+            str(self.image_for_project_1),
+            f"Фото для {self.project_1}",
+        )
 
     def test_models_default_values(self):
         self.assertFalse(self.project_1.needed_promotion)
         self.assertEqual(self.project_1.actual_status, StatusOfProject.CREATED)
+        self.assertEqual(
+            self.image_for_project_1.type, ProjectImageTypes.BEFORE
+        )
 
     def test_models_methods(self):
         self.project_1.promote()
