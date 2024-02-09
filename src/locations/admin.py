@@ -1,23 +1,12 @@
 from django.contrib import admin
 
-from locations.models import FederationEntity, Municipality, Region, Settlement
+from locations.models import FederationEntity, Region, Settlement
 
 
 @admin.register(FederationEntity)
 class AdminFederationEntity(admin.ModelAdmin):
     list_display = ("index", "title", "has_subregions", "projects_create")
     search_fields = ("index", "title")
-
-
-@admin.register(Municipality)
-class AdminMunicipality(admin.ModelAdmin):
-    list_display = ("title", "has_subregions", "projects_create")
-    search_fields = (
-        "title",
-        "region__title",
-        "region__federation_entity__index",
-        "region__federation_entity__title",
-    )
 
 
 @admin.register(Region)
@@ -35,8 +24,7 @@ class AdminSettlement(admin.ModelAdmin):
     list_display = ("title", "has_subregions", "projects_create")
     search_fields = (
         "title",
-        "мunicipality__title",
-        "мunicipality__region__title",
-        "мunicipality__region__federation_entity__index",
-        "мunicipality__region__federation_entity__title",
+        "region__title",
+        "region__federation_entity__index",
+        "region__federation_entity__title",
     )

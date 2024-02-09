@@ -8,7 +8,6 @@ from rest_framework.test import APIClient, APITestCase
 
 from locations.tests.factories import (
     FederationEntityFactory,
-    MunicipalityFactory,
     RegionFactory,
     SettlementFactory,
 )
@@ -86,7 +85,5 @@ class LocationsFixtures(TestUserFixtures):
         cls.region_2_2 = RegionFactory(
             federation_entity=cls.federation_entity_2
         )
-        cls.municipality_1 = MunicipalityFactory(region=cls.region_1_1)
-        cls.municipality_2 = MunicipalityFactory(region=cls.region_2_1)
-        cls.settlement_1 = SettlementFactory(municipality=cls.municipality_1)
-        cls.settlement_2 = SettlementFactory(municipality=cls.municipality_2)
+        cls.settlement_1 = SettlementFactory(region=cls.region_2_1)
+        cls.settlement_2 = SettlementFactory(region=cls.region_1_1)

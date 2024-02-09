@@ -1,6 +1,6 @@
 from django_filters import FilterSet, ModelChoiceFilter, NumberFilter
 
-from locations.models import FederationEntity, Municipality, Region, Settlement
+from locations.models import FederationEntity, Region, Settlement
 
 
 class RegionFilter(FilterSet):
@@ -29,9 +29,9 @@ class RegionFilter(FilterSet):
         ]
 
 
-class MunicipalityFilter(FilterSet):
+class SettlementFilter(FilterSet):
     """
-    Кастомный фильтр для муниципалитетов.
+    Кастомный фильтр для населенных пунктов.
     """
 
     region_title = ModelChoiceFilter(
@@ -44,30 +44,8 @@ class MunicipalityFilter(FilterSet):
     )
 
     class Meta:
-        model = Municipality
+        model = Settlement
         fields = [
             "region_title",
             "region",
-        ]
-
-
-class SettlementFilter(FilterSet):
-    """
-    Кастомный фильтр для населенных пунктов.
-    """
-
-    municipality_title = ModelChoiceFilter(
-        field_name="municipality__title",
-        to_field_name="title",
-        queryset=Municipality.objects.all(),
-    )
-    municipality = ModelChoiceFilter(
-        queryset=Municipality.objects.all(),
-    )
-
-    class Meta:
-        model = Settlement
-        fields = [
-            "municipality_title",
-            "municipality",
         ]

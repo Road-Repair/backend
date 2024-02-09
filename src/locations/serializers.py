@@ -3,7 +3,6 @@ from rest_framework.serializers import ModelSerializer, StringRelatedField
 from locations.models import (
     AbstractLocationModel,
     FederationEntity,
-    Municipality,
     Region,
     Settlement,
 )
@@ -58,29 +57,14 @@ class RegionSerializer(ModelSerializer):
         ]
 
 
-class MunicipalitySerializer(ModelSerializer):
-    """
-    Сериализатор для муниципалитетов.
-    """
-
-    region = StringRelatedField()
-
-    class Meta:
-        model = Municipality
-        fields = AbstractLocationSerializer.Meta.fields + ["region"]
-        read_only_fields = AbstractLocationSerializer.Meta.fields + ["region"]
-
-
 class SettlementSerializer(ModelSerializer):
     """
     Сериализатор для населенных пунктов.
     """
 
-    municipality = StringRelatedField()
+    region = StringRelatedField()
 
     class Meta:
         model = Settlement
-        fields = AbstractLocationSerializer.Meta.fields + ["municipality"]
-        read_only_fields = AbstractLocationSerializer.Meta.fields + [
-            "municipality"
-        ]
+        fields = AbstractLocationSerializer.Meta.fields + ["region"]
+        read_only_fields = AbstractLocationSerializer.Meta.fields + ["region"]
