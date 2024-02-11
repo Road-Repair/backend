@@ -14,5 +14,5 @@ class ProjectManager(models.Manager):
             super()
             .get_queryset()
             .select_related("initiator")
-            .prefetch_related("images", "statuses")
+            .prefetch_related("images", "statuses", "location")
         )
