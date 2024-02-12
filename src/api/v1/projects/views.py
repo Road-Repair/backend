@@ -1,19 +1,16 @@
-from drf_spectacular.utils import (
-    extend_schema,
-    extend_schema_view,
-)
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.mixins import (
     CreateModelMixin,
     ListModelMixin,
-    RetrieveModelMixin
+    RetrieveModelMixin,
 )
 from rest_framework.viewsets import GenericViewSet
 
 from projects.models import Project
 from projects.serializers import (
-    ProjectCreateSerializer,
     ProjecListSerializer,
-    ProjecRetrieveSerializer
+    ProjecRetrieveSerializer,
+    ProjectCreateSerializer,
 )
 
 
@@ -30,10 +27,7 @@ from projects.serializers import (
     ),
 )
 class ProjectViewSet(
-    CreateModelMixin,
-    ListModelMixin,
-    RetrieveModelMixin,
-    GenericViewSet
+    CreateModelMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet
 ):
     """
     Вьюсет для проектов.

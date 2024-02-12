@@ -1,10 +1,12 @@
+from django.db import models
 from rest_framework.serializers import (
     ChoiceField,
     ModelSerializer,
+    SerializerMethodField,
     StringRelatedField,
-    SerializerMethodField
 )
 
+from core.choices_classes import LocationLevel
 from projects.models import Project, ProjectImage
 
 
@@ -23,9 +25,7 @@ class ProjectCreateSerializer(ModelSerializer):
     Сериализатор для создания проекта.
     """
 
-    location_type = ChoiceField(
-        choices={}
-    )
+    location_type = ChoiceField(choices=LocationLevel.choices)
 
     class Meta:
         model = Project
@@ -36,6 +36,14 @@ class ProjectCreateSerializer(ModelSerializer):
             "description",
             "work_type",
         ]
+
+    def create(self, validated_data):
+        location_type = validated_data.pop("location_type")
+        content_type = models.Q(app_label="locations", model=location_type)
+        project = Project.objects.create(
+            **validated_data, content_type=content_type
+        )
+        return project
 
 
 class ProjecListSerializer(ModelSerializer):
@@ -74,7 +82,8 @@ class ProjecRetrieveSerializer(ProjecListSerializer):
             "address",
             "work_type",
             "needed_promotion",
-            "images"
+            "images",
+            "cost_of_works",
         ]
 
     def get_images(self, obj):

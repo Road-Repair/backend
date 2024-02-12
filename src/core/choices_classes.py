@@ -29,3 +29,9 @@ class StatusOfProject(models.IntegerChoices):
     FUNDRASING = 4, "Сбор средств"
     AT_WORK = 5, "В работе"
     FINISHED = 6, "Завершен"
+
+
+class LocationLevel(models.TextChoices):
+    FEDERETION_ENTITY = "federationentity"
+    REGION = "region"
+    SETTLEMENT = "settlement"

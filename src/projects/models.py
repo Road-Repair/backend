@@ -50,6 +50,13 @@ class Project(models.Model):
         choices=StatusOfProject.choices,
         default=StatusOfProject.CREATED,
     )
+    cost_of_works = models.DecimalField(
+        "Стоимость работ",
+        max_digits=12,
+        decimal_places=2,
+        blank=True,
+        null=True,
+    )
     needed_promotion = models.BooleanField("Нужно продвижение", default=False)
 
     objects = ProjectManager()
