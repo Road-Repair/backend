@@ -42,3 +42,6 @@ class ProjectViewSet(
         if self.action == "create":
             return ProjectCreateSerializer
         return ProjecListSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(initiator=self.request.user)

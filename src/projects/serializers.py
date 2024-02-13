@@ -1,9 +1,11 @@
-from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
 from rest_framework.serializers import (
     ChoiceField,
     ModelSerializer,
     SerializerMethodField,
     StringRelatedField,
+    ValidationError,
 )
 
 from core.choices_classes import LocationLevel
@@ -25,21 +27,40 @@ class ProjectCreateSerializer(ModelSerializer):
     Сериализатор для создания проекта.
     """
 
-    location_type = ChoiceField(choices=LocationLevel.choices)
+    content_type = ChoiceField(choices=LocationLevel.choices, write_only=True)
+    location = StringRelatedField(read_only=True)
 
     class Meta:
         model = Project
         fields = [
-            "location_type",
+            "content_type",
             "object_id",
             "number",
             "description",
             "work_type",
+            "location",
         ]
 
+    def validate(self, attrs):
+        content_type = attrs.get("content_type", None)
+        model = ContentType.objects.get(
+            app_label="locations", model=content_type
+        )
+        if (
+            not model.model_class()
+            .objects.filter(id=attrs.get("object_id", None))
+            .exists()
+        ):
+            raise ValidationError("Выбран неверный идентификатор объекта")
+
+        return attrs
+
     def create(self, validated_data):
-        location_type = validated_data.pop("location_type")
-        content_type = models.Q(app_label="locations", model=location_type)
+        self.validate(validated_data)
+        content_type_data = validated_data.pop("content_type")
+        content_type = get_object_or_404(
+            ContentType, app_label="locations", model=content_type_data
+        )
         project = Project.objects.create(
             **validated_data, content_type=content_type
         )
