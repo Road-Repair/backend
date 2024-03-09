@@ -2,15 +2,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import filters, generics
 
-from api.v1.locations.filters import (
-    MunicipalityFilter,
-    RegionFilter,
-    SettlementFilter,
-)
-from locations.models import FederationEntity, Municipality, Region, Settlement
+from api.v1.locations.filters import RegionFilter, SettlementFilter
+from locations.models import FederationEntity, Region, Settlement
 from locations.serializers import (
     FederationEntitySerializer,
-    MunicipalitySerializer,
     RegionSerializer,
     SettlementSerializer,
 )
@@ -44,22 +39,6 @@ class RegionView(generics.ListAPIView):
     queryset = Region.objects.all()
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_class = RegionFilter
-    search_fields = ["title"]
-
-
-@extend_schema(
-    tags=["Locations"],
-    summary="Получение списка муниципалитетов.",
-)
-class MunicipalityView(generics.ListAPIView):
-    """
-    Вьюкласс для муниципалитетов.
-    """
-
-    serializer_class = MunicipalitySerializer
-    queryset = Municipality.objects.all()
-    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    filterset_class = MunicipalityFilter
     search_fields = ["title"]
 
 

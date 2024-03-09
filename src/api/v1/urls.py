@@ -8,4 +8,5 @@ urlpatterns = [
     ),
     path("", include("api.v1.users.urls")),
     path("locations/", include("api.v1.locations.urls")),
+    path("projects/", include("api.v1.projects.urls")),
 ]

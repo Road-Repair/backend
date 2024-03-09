@@ -45,7 +45,7 @@ class NewsImage(models.Model):
     """
 
     news = models.ForeignKey(
-        News, on_delete=models.CASCADE, related_name="news"
+        News, on_delete=models.CASCADE, related_name="images"
     )
     image = models.ImageField(
         "Фотография", upload_to="news_images", blank=True, null=True

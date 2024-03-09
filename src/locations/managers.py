@@ -10,9 +10,8 @@ class SettlementManager(models.Manager):
     def get_queryset(self) -> QuerySet:
         qs = super().get_queryset()
         return qs.select_related(
-            "municipality",
-            "municipality__region",
-            "municipality__region__federation_entity",
+            "region",
+            "region__federation_entity",
         )
 
 
@@ -26,13 +25,3 @@ class RegionManager(models.Manager):
         return qs.select_related(
             "federation_entity",
         )
-
-
-class MunicipalityManager(models.Manager):
-    """
-    Пользовательстки менеджер для модели Муниципалитетов.
-    """
-
-    def get_queryset(self) -> QuerySet:
-        qs = super().get_queryset()
-        return qs.select_related("region", "region__federation_entity")

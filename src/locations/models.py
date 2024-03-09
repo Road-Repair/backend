@@ -1,11 +1,7 @@
 from django.db import models
 
 from core.enums import Limits
-from locations.managers import (
-    MunicipalityManager,
-    RegionManager,
-    SettlementManager,
-)
+from locations.managers import RegionManager, SettlementManager
 
 
 class AbstractLocationModel(models.Model):
@@ -69,29 +65,13 @@ class Region(AbstractLocationModel):
         verbose_name_plural = "Районы"
 
 
-class Municipality(AbstractLocationModel):
-    """
-    Муниципальное образование (а также городские или сельские послеления).
-    """
-
-    region = models.ForeignKey(
-        Region, on_delete=models.CASCADE, related_name="municipalities"
-    )
-
-    objects = MunicipalityManager()
-
-    class Meta:
-        verbose_name = "Муниципальное образование"
-        verbose_name_plural = "Муниципальные образования"
-
-
 class Settlement(AbstractLocationModel):
     """
     Населенный пункт.
     """
 
-    municipality = models.ForeignKey(
-        Municipality, on_delete=models.CASCADE, related_name="settlements"
+    region = models.ForeignKey(
+        Region, on_delete=models.CASCADE, related_name="settlements"
     )
     projects_create = models.BooleanField(
         "Можно создавать авторские проекты", default=True

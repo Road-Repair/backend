@@ -1,10 +1,9 @@
-from django.test import TestCase
-
+from core.fixtures import BaseTestCase
 from users.models import Account, CustomUser
 from users.tests.factories import CustomUserFactory
 
 
-class UsersModelsTest(TestCase):
+class UsersModelsTest(BaseTestCase):
     """Класс для тестирования моделей приложения users."""
 
     @classmethod
